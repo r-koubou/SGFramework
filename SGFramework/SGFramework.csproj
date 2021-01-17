@@ -1,0 +1,29 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFramework>netstandard2.0</TargetFramework>
+        <AssemblyVersion>0.0.0</AssemblyVersion>
+        <LangVersion>9</LangVersion>
+        <NoWarn>$(NoWarn);1591</NoWarn>
+        <Nullable>enable</Nullable>
+        <!-- NuGet -->
+        <PackageId>SGFramework</PackageId>
+        <Authors>R-Koubou</Authors>
+        <Copyright>R-Koubou</Copyright>
+        <RepositoryType>git</RepositoryType>
+        <PackageLicenseExpression>MIT</PackageLicenseExpression>
+        <Description>Generating code of value object by C# 9.0 SourceGenerator</Description>
+        <PackageProjectUrl>https://github.com/r-koubou/SGFramework</PackageProjectUrl>
+        <RepositoryUrl>https://github.com/r-koubou/SGFramework.git</RepositoryUrl>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <None Include="$(OutputPath)\$(AssemblyName).dll" Pack="true" PackagePath="analyzers/dotnet/cs" Visible="false" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <PackageReference Include="Microsoft.CodeAnalysis.CSharp" Version="3.8.0" PrivateAssets="all" />
+        <PackageReference Include="System.CodeDom" Version="5.0.0" />
+    </ItemGroup>
+
+</Project>

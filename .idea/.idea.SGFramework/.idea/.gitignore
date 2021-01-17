@@ -1,0 +1,10 @@
+# デフォルトの無視ファイル
+/shelf/
+/workspace.xml
+# Rider ignored files
+/modules.xml
+/contentModel.xml
+/projectSettingsUpdater.xml
+/.idea.SGFramework.iml
+# エディターベースの HTTP クライアントリクエスト
+/httpRequests/
