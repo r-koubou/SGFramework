@@ -10,9 +10,19 @@ namespace SGFramework.TypeDeclaration
     public abstract class SourceGenerator<TReceiver> : ISourceGenerator
         where TReceiver : ITypeDeclarationSyntaxReceiver
     {
-        protected abstract bool LaunchDebuggerOnInit { get; }
-
         protected Dictionary<string, IAttributeArgumentParser> AttributeArgumentParsers { get; } = new();
+
+        #region Abstruct, Virtual methods
+        protected abstract bool LaunchDebuggerOnInit { get; }
+        protected abstract TReceiver CreateReceiver();
+        protected abstract void SetupAttributeArgumentParser( Dictionary<string, IAttributeArgumentParser> map );
+        protected abstract void GenerateAttributeCode( GeneratorExecutionContext context );
+        protected abstract string GenerateCode(
+            TypeDeclarationSyntax declaration,
+            string nameSpace,
+            string typeName,
+            IReadOnlyList<AttributeProperties> propertiesList );
+        #endregion
 
         public virtual void Initialize( GeneratorInitializationContext context )
         {
@@ -28,16 +38,12 @@ namespace SGFramework.TypeDeclaration
             context.RegisterForSyntaxNotifications( () => receiver );
         }
 
-        protected abstract TReceiver CreateReceiver();
-
-        protected abstract void SetupAttributeArgumentParser( Dictionary<string, IAttributeArgumentParser> map );
-
-        protected static void GenerateAttribute( GeneratorExecutionContext context ) {}
-
         public virtual void Execute( GeneratorExecutionContext context )
         {
             try
             {
+                GenerateAttributeCode( context );
+
                 var receiver = context.SyntaxReceiver is TReceiver syntaxReceiver ? syntaxReceiver : default;
                 if( receiver == null )
                 {
@@ -46,6 +52,31 @@ namespace SGFramework.TypeDeclaration
 
                 var declarations = CollectDeclarations( context, receiver );
 
+                foreach( var x in declarations )
+                {
+                    var symbol = context.Compilation.GetSemanticModel( x.Syntax.SyntaxTree ).GetDeclaredSymbol( x.Syntax );
+
+                    if( symbol == null )
+                    {
+                        throw new Exception( "Cannot access to Declaration SyntaxTree" );
+                    }
+
+                    var ns = symbol.ContainingNamespace.ToDisplayString();
+                    var name = symbol.Name;
+                    var hintName = $"{ns}.{name}.cs";
+
+                    if( string.IsNullOrEmpty( ns ) )
+                    {
+                        ns = hintName = string.Empty;
+                    }
+
+                    var code = GenerateCode( x.Syntax, ns, name, x.PropertiesList );
+
+                    if( !string.IsNullOrEmpty( code ) )
+                    {
+                        context.AddSource( hintName, code );
+                    }
+                }
             }
             catch( Exception e )
             {
@@ -82,29 +113,13 @@ namespace SGFramework.TypeDeclaration
                         continue;
                     }
 
-                    parser.ParseAttributeArgument( ctx, index, argumentExpression );
+                    parser.ParseAttributeArgument( index, ctx.SemanticModel, argumentExpression, ctx.PropertiesList );
                 }
 
                 result.Add( ctx );
             }
 
             return result;
-        }
-
-        protected abstract void ParseAttributeArgumentExpression( TypeDeclarationContext context, string attributeName, int argumentIndex, ExpressionSyntax expression );
-
-        #endregion
-
-        #region Utility
-        public static TEnum ParseEnumValue<TEnum>( ExpressionSyntax expression ) where TEnum : Enum
-        {
-            var enumValue = Enum.Parse(
-                typeof(TEnum),
-                expression.ToString()
-                          .Replace( $"{nameof(TEnum)}.", "" )
-                          .Replace( "|",                 "," ) );
-
-            return (TEnum)enumValue;
         }
         #endregion
     }

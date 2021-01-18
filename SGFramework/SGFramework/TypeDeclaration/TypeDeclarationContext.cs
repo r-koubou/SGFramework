@@ -10,7 +10,7 @@ namespace SGFramework.TypeDeclaration
         public TypeDeclarationSyntax Syntax { get; }
         public SemanticModel SemanticModel { get; }
 
-        public List<AttributeProperties> Properties { get; } = new();
+        public List<AttributeProperties> PropertiesList { get; } = new();
 
         public TypeDeclarationContext( GeneratorExecutionContext ctx, TypeDeclarationSyntax syntax )
         {

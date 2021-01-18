@@ -1,0 +1,27 @@
+<#@ template language="C#" visibility="internal" linePragmas="false" #>
+using System;
+
+namespace GeneratorSample
+{
+    [Flags]
+    internal enum ValueOption
+    {
+        None = 0,
+        NonValidating = 1 << 0,
+        Implicit = 1 << 1,
+        Comparable = 1 << 2,
+    }
+
+    [AttributeUsage( AttributeTargets.Class, AllowMultiple = false )]
+    internal class ValueObjectAttribute : Attribute
+    {
+        public Type Type { get; }
+        public ValueOption Option { get; }
+
+        public ValueObjectAttribute( Type type, ValueOption option = ValueOption.None )
+        {
+            Type   = type;
+            Option = option;
+        }
+    }
+}

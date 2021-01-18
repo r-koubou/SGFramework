@@ -1,15 +1,14 @@
-using System;
 using System.Collections.Generic;
 
 namespace SGFramework
 {
     public class AttributeProperties
     {
-        public Type AttributeType { get; }
+        public string AttributeType { get; }
 
         public Dictionary<string, object> Propertes { get; } = new();
 
-        public AttributeProperties( Type attributeType )
+        public AttributeProperties( string attributeType )
         {
             AttributeType = attributeType;
         }

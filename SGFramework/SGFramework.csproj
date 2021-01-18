@@ -19,11 +19,32 @@
 
     <ItemGroup>
         <None Include="$(OutputPath)\$(AssemblyName).dll" Pack="true" PackagePath="analyzers/dotnet/cs" Visible="false" />
+        <None Update="Sample\ValueObjectAttributeTemplate.tt">
+          <Generator>TextTemplatingFilePreprocessor</Generator>
+          <LastGenOutput>ValueObjectAttributeTemplate.cs</LastGenOutput>
+        </None>
+        <None Update="Sample\ValueObjectTemplate.tt">
+          <Generator>TextTemplatingFilePreprocessor</Generator>
+          <LastGenOutput>ValueObjectTemplate.cs</LastGenOutput>
+        </None>
     </ItemGroup>
 
     <ItemGroup>
         <PackageReference Include="Microsoft.CodeAnalysis.CSharp" Version="3.8.0" PrivateAssets="all" />
         <PackageReference Include="System.CodeDom" Version="5.0.0" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <Compile Update="Sample\ValueObjectAttributeTemplate.cs">
+        <AutoGen>True</AutoGen>
+        <DesignTime>True</DesignTime>
+        <DependentUpon>ValueObjectAttributeTemplate.tt</DependentUpon>
+      </Compile>
+      <Compile Update="Sample\ValueObjectTemplate.cs">
+        <AutoGen>True</AutoGen>
+        <DesignTime>True</DesignTime>
+        <DependentUpon>ValueObjectTemplate.tt</DependentUpon>
+      </Compile>
     </ItemGroup>
 
 </Project>
