@@ -5,9 +5,6 @@ using System.Text.RegularExpressions;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 
-using SGFramework.Sample;
-using SGFramework.Sample.Value;
-
 namespace SGFramework.TypeDeclaration
 {
     public class TypeDeclarationSyntaxReceiver : ITypeDeclarationSyntaxReceiver
@@ -36,7 +33,7 @@ namespace SGFramework.TypeDeclaration
                 var name = attribute.Name.ToString();
                 name = suffixRegex.Replace( name, "" );
 
-                if( AttributeContainsChecker.ContainsAttribute( new AttributeName( name ) ) )
+                if( AttributeContainsChecker.ContainsAttribute( new AttributeTypeName( name ) ) )
                 {
                     _declarations.Add( ( syntax, attribute ) );
                 }

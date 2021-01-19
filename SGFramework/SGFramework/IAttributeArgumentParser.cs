@@ -7,6 +7,10 @@ namespace SGFramework
 {
     public interface IAttributeArgumentParser
     {
-        public void ParseAttributeArgument( int argumentIndex, SemanticModel semanticModel, ExpressionSyntax argumentExpression, List<AttributeProperties> result );
+        public void ParseAttributeArgument(
+            int argumentIndex,
+            SemanticModel semanticModel,
+            ExpressionSyntax argumentExpression,
+            IDictionary<AttributeParamName,object> result );
     }
 }

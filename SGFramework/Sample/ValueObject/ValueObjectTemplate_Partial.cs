@@ -1,4 +1,4 @@
-namespace SGFramework.Sample
+namespace SGFramework.Sample.ValueObject
 {
     internal partial class ValueObjectTemplate
     {

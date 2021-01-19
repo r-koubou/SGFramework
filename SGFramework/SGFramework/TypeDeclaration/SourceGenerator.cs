@@ -5,26 +5,23 @@ using System.Diagnostics;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 
-using SGFramework.Sample;
-using SGFramework.Sample.Value;
-
 namespace SGFramework.TypeDeclaration
 {
     public abstract class SourceGenerator<TReceiver> : ISourceGenerator
         where TReceiver : ITypeDeclarationSyntaxReceiver
     {
-        protected Dictionary<AttributeName, IAttributeArgumentParser> AttributeArgumentParsers { get; } = new();
+        protected Dictionary<AttributeTypeName, IAttributeArgumentParser> AttributeArgumentParsers { get; } = new();
 
         #region Abstruct, Virtual methods
         protected abstract bool LaunchDebuggerOnInit { get; }
         protected abstract TReceiver CreateReceiver();
-        protected abstract void SetupAttributeArgumentParser( Dictionary<AttributeName, IAttributeArgumentParser> map );
+        protected abstract void SetupAttributeArgumentParser( Dictionary<AttributeTypeName, IAttributeArgumentParser> map );
         protected abstract void GenerateAttributeCode( GeneratorExecutionContext context );
         protected abstract string GenerateCode(
             TypeDeclarationSyntax declaration,
             string nameSpace,
             string typeName,
-            IReadOnlyList<AttributeProperties> propertiesList );
+            IDictionary<AttributeTypeName, IDictionary<AttributeParamName, object>> attributeTypeList );
         #endregion
 
         public virtual void Initialize( GeneratorInitializationContext context )
@@ -73,7 +70,7 @@ namespace SGFramework.TypeDeclaration
                         ns = hintName = string.Empty;
                     }
 
-                    var code = GenerateCode( x.Syntax, ns, name, x.PropertiesList );
+                    var code = GenerateCode( x.Syntax, ns, name, x.AttributeList );
 
                     if( !string.IsNullOrEmpty( code ) )
                     {
@@ -104,9 +101,9 @@ namespace SGFramework.TypeDeclaration
                 }
 
                 var ctx = new TypeDeclarationContext( context, declaration );
-                var attributeName = attribute.Name.ToString();
+                var attributeName = new AttributeTypeName( attribute.Name.ToString() );
 
-                if( !AttributeArgumentParsers.TryGetValue( new AttributeName( attributeName ), out var parser ) )
+                if( !AttributeArgumentParsers.TryGetValue( attributeName, out var parser ) )
                 {
                     continue;
                 }
@@ -117,7 +114,16 @@ namespace SGFramework.TypeDeclaration
                 {
                     var argument = attribute.ArgumentList.Arguments[ index ];
                     var argumentExpression = argument.Expression;
-                    parser.ParseAttributeArgument( index, ctx.SemanticModel, argumentExpression, ctx.PropertiesList );
+                    var parameters = new Dictionary<AttributeParamName, object>();
+
+                    parser.ParseAttributeArgument(
+                        index,
+                        ctx.SemanticModel,
+                        argumentExpression,
+                        parameters
+                    );
+
+                    ctx.AttributeList[ attributeName ] = parameters;
                 }
 
                 result.Add( ctx );

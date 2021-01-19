@@ -10,7 +10,8 @@ namespace SGFramework.TypeDeclaration
         public TypeDeclarationSyntax Syntax { get; }
         public SemanticModel SemanticModel { get; }
 
-        public List<AttributeProperties> PropertiesList { get; } = new();
+        public IDictionary<AttributeTypeName, IDictionary<AttributeParamName, object>> AttributeList { get; }
+            = new Dictionary<AttributeTypeName, IDictionary<AttributeParamName, object>>();
 
         public TypeDeclarationContext( GeneratorExecutionContext ctx, TypeDeclarationSyntax syntax )
         {

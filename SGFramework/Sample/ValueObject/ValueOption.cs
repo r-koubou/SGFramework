@@ -1,6 +1,6 @@
 using System;
 
-namespace SGFramework.Sample
+namespace SGFramework.Sample.ValueObject
 {
     [Flags]
     internal enum ValueOption

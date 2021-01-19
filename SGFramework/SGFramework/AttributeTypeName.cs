@@ -1,17 +1,17 @@
 ﻿using System;
 
-namespace SGFramework.Sample.Value
+namespace SGFramework
 {
-    public class AttributeName : IEquatable<AttributeName>
+    public class AttributeTypeName : IEquatable<AttributeTypeName>
     {
         public string Value { get; }
 
-        public AttributeName( string value )
+        public AttributeTypeName( string value )
         {
             Value = value;
         }
 
-        public bool Equals( AttributeName? other )
+        public bool Equals( AttributeTypeName? other )
         {
             if( ReferenceEquals( null, other ) )
             {
@@ -43,13 +43,13 @@ namespace SGFramework.Sample.Value
                 return false;
             }
 
-            return Equals( (AttributeName)obj );
+            return Equals( (AttributeTypeName)obj );
         }
 
         public override int GetHashCode() => Value.GetHashCode();
 
-        public static bool operator ==( AttributeName? left, AttributeName? right ) => Equals( left, right );
+        public static bool operator ==( AttributeTypeName? left, AttributeTypeName? right ) => Equals( left, right );
 
-        public static bool operator !=( AttributeName? left, AttributeName? right ) => !Equals( left, right );
+        public static bool operator !=( AttributeTypeName? left, AttributeTypeName? right ) => !Equals( left, right );
     }
 }
