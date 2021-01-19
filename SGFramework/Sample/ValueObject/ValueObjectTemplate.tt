@@ -17,9 +17,9 @@ namespace <#= Namespace #>
         public <#= Name #>( <#= BaseTypeName #> value )
         {
 <# if( !string.IsNullOrEmpty( Min ) && !string.IsNullOrEmpty( Max ) ) { #>
-            if( value < <#= Min #> || value >= <#= Max #> )
+            if( value < (<#= Min #>) || value > (<#= Max #>) )
             {
-                throw new ArgumentOutOfRangeException( $"<#= Name #> : {value} (range:$<#= Min #> < <#= Max #>)" );
+                throw new ArgumentOutOfRangeException( $"<#= Name #> : {value} (range:<#= Min #> < <#= Max #>)" );
             }
 <# } else if( ValueOption.HasFlag( ValueOption.NonValidating ) ) { #>
             Value = value;

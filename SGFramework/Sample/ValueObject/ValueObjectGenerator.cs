@@ -73,15 +73,13 @@ namespace SGFramework.Sample.ValueObject
             object maxValue = string.Empty;
             if( valueRangeAttributeParams != null! )
             {
-                if( valueRangeAttributeParams.TryGetValue( AttributeParameterNames.Min, out minValue ) )
+                if( !valueRangeAttributeParams.TryGetValue( AttributeParameterNames.Min, out minValue ) )
                 {
-                    // Add parentheses for evaluating conditional expression after code generation
-                    minValue = $"({minValue})";
+                    minValue = string.Empty;
                 }
-                if( valueRangeAttributeParams.TryGetValue( AttributeParameterNames.Max, out maxValue ) )
+                if( !valueRangeAttributeParams.TryGetValue( AttributeParameterNames.Max, out maxValue ) )
                 {
-                    // Add parentheses for evaluating conditional expression after code generation
-                    maxValue = $"({maxValue})";
+                    maxValue = string.Empty;
                 }
             }
             #endregion
