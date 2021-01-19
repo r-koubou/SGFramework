@@ -88,58 +88,61 @@ namespace SGFramework.TypeDeclaration
         }
 
         #region Collect
+
         private IReadOnlyCollection<TypeDeclarationContext> CollectDeclarations(
             GeneratorExecutionContext context,
             TReceiver receiver )
         {
             var result = new List<TypeDeclarationContext>();
 
-            #region All types
             foreach( var declaration in receiver.Declarations.Keys )
             {
                 var ctx = new TypeDeclarationContext( context, declaration );
 
-                #region All attributes per type
-                foreach( var attribute in receiver.Declarations[ declaration ] )
-                {
-                    if( attribute.ArgumentList is null )
-                    {
-                        result.Add( new TypeDeclarationContext( context, declaration ) );
-                        continue;
-                    }
-
-                    var attributeName = new AttributeTypeName( attribute.Name.ToString() );
-
-                    if( !AttributeArgumentParsers.TryGetValue( attributeName, out var parser ) )
-                    {
-                        continue;
-                    }
-
-                    var attributeArgumentCount = attribute.ArgumentList.Arguments.Count;
-                    var attributeParameters = new Dictionary<AttributeParamName, object>();
-
-                    for( var index = 0; index < attributeArgumentCount; index++ )
-                    {
-                        var argument = attribute.ArgumentList.Arguments[ index ];
-                        var argumentExpression = argument.Expression;
-
-                        parser.ParseAttributeArgument(
-                            index,
-                            ctx.SemanticModel,
-                            argumentExpression,
-                            attributeParameters
-                        );
-                    }
-
-                    ctx.AttributeList[ attributeName ] = attributeParameters;
-                }
-                #endregion ~All attributes per type
-
+                CollectAttributes( receiver, declaration, ctx );
                 result.Add( ctx );
             }
-            #endregion ~All types
 
             return result;
+        }
+
+        private void CollectAttributes(
+            TReceiver receiver,
+            TypeDeclarationSyntax declaration,
+            TypeDeclarationContext context )
+        {
+            foreach( var attribute in receiver.Declarations[ declaration ] )
+            {
+                if( attribute.ArgumentList is null )
+                {
+                    continue;
+                }
+
+                var attributeName = new AttributeTypeName( attribute.Name.ToString() );
+
+                if( !AttributeArgumentParsers.TryGetValue( attributeName, out var parser ) )
+                {
+                    continue;
+                }
+
+                var attributeArgumentCount = attribute.ArgumentList.Arguments.Count;
+                var attributeParameters = new Dictionary<AttributeParamName, object>();
+
+                for( var index = 0; index < attributeArgumentCount; index++ )
+                {
+                    var argument = attribute.ArgumentList.Arguments[ index ];
+                    var argumentExpression = argument.Expression;
+
+                    parser.ParseAttributeArgument(
+                        index,
+                        context.SemanticModel,
+                        argumentExpression,
+                        attributeParameters
+                    );
+                }
+
+                context.AttributeList[ attributeName ] = attributeParameters;
+            }
         }
         #endregion
     }
