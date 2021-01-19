@@ -30,7 +30,7 @@ namespace SGFramework.Sample
                     throw new SyntaxErrorException( "type is missing" );
                 }
 
-                result.Propertes[ AttributePropertyKey.AttributeBaseName ] = symbol.Name;
+                result.Propertes[ AttributePropertyKey.AttributeBaseName ] = symbol.ToString();
             }
         }
 
