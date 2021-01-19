@@ -103,16 +103,17 @@ namespace SGFramework.TypeDeclaration
                 var ctx = new TypeDeclarationContext( context, declaration );
                 var attributeName = attribute.Name.ToString();
 
-                for( var index = 0; index < attribute.ArgumentList.Arguments.Count; index++ )
+                if( !AttributeArgumentParsers.TryGetValue( attributeName, out var parser ) )
+                {
+                    continue;
+                }
+
+                var attributeArgumentCount = attribute.ArgumentList.Arguments.Count;
+
+                for( var index = 0; index < attributeArgumentCount; index++ )
                 {
                     var argument = attribute.ArgumentList.Arguments[ index ];
                     var argumentExpression = argument.Expression;
-
-                    if( !AttributeArgumentParsers.TryGetValue( attributeName, out var parser ) )
-                    {
-                        continue;
-                    }
-
                     parser.ParseAttributeArgument( index, ctx.SemanticModel, argumentExpression, ctx.PropertiesList );
                 }
 
