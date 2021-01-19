@@ -7,7 +7,7 @@ namespace SGFramework.TypeDeclaration
 {
     public interface ITypeDeclarationSyntaxReceiver : ISyntaxReceiver
     {
-        public IReadOnlyCollection<(TypeDeclarationSyntax, AttributeSyntax)> Declarations { get; }
+        public IReadOnlyDictionary<TypeDeclarationSyntax, IReadOnlyCollection<AttributeSyntax>> Declarations { get; }
         public IAttributeContainsChecker AttributeContainsChecker { get; set; }
     }
 }

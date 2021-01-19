@@ -13,7 +13,9 @@ namespace SGFramework.TypeDeclaration
         protected Dictionary<AttributeTypeName, IAttributeArgumentParser> AttributeArgumentParsers { get; } = new();
 
         #region Abstruct, Virtual methods
+#if DEBUG
         protected abstract bool LaunchDebuggerOnInit { get; }
+#endif
         protected abstract TReceiver CreateReceiver();
         protected abstract void SetupAttributeArgumentParser( Dictionary<AttributeTypeName, IAttributeArgumentParser> map );
         protected abstract void GenerateAttributeCode( GeneratorExecutionContext context );
@@ -92,42 +94,50 @@ namespace SGFramework.TypeDeclaration
         {
             var result = new List<TypeDeclarationContext>();
 
-            foreach( var (declaration, attribute) in receiver.Declarations )
+            #region All types
+            foreach( var declaration in receiver.Declarations.Keys )
             {
-                if( attribute.ArgumentList is null )
-                {
-                    result.Add( new TypeDeclarationContext( context, declaration ) );
-                    continue;
-                }
-
                 var ctx = new TypeDeclarationContext( context, declaration );
-                var attributeName = new AttributeTypeName( attribute.Name.ToString() );
 
-                if( !AttributeArgumentParsers.TryGetValue( attributeName, out var parser ) )
+                #region All attributes per type
+                foreach( var attribute in receiver.Declarations[ declaration ] )
                 {
-                    continue;
+                    if( attribute.ArgumentList is null )
+                    {
+                        result.Add( new TypeDeclarationContext( context, declaration ) );
+                        continue;
+                    }
+
+                    var attributeName = new AttributeTypeName( attribute.Name.ToString() );
+
+                    if( !AttributeArgumentParsers.TryGetValue( attributeName, out var parser ) )
+                    {
+                        continue;
+                    }
+
+                    var attributeArgumentCount = attribute.ArgumentList.Arguments.Count;
+                    var attributeParameters = new Dictionary<AttributeParamName, object>();
+
+                    for( var index = 0; index < attributeArgumentCount; index++ )
+                    {
+                        var argument = attribute.ArgumentList.Arguments[ index ];
+                        var argumentExpression = argument.Expression;
+
+                        parser.ParseAttributeArgument(
+                            index,
+                            ctx.SemanticModel,
+                            argumentExpression,
+                            attributeParameters
+                        );
+                    }
+
+                    ctx.AttributeList[ attributeName ] = attributeParameters;
                 }
-
-                var attributeArgumentCount = attribute.ArgumentList.Arguments.Count;
-
-                for( var index = 0; index < attributeArgumentCount; index++ )
-                {
-                    var argument = attribute.ArgumentList.Arguments[ index ];
-                    var argumentExpression = argument.Expression;
-                    var parameters = new Dictionary<AttributeParamName, object>();
-
-                    parser.ParseAttributeArgument(
-                        index,
-                        ctx.SemanticModel,
-                        argumentExpression,
-                        parameters
-                    );
-
-                    ctx.AttributeList[ attributeName ] = parameters;
-                }
+                #endregion ~All attributes per type
 
                 result.Add( ctx );
             }
+            #endregion ~All types
 
             return result;
         }

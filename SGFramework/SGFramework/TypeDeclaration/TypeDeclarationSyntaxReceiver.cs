@@ -9,9 +9,9 @@ namespace SGFramework.TypeDeclaration
 {
     public class TypeDeclarationSyntaxReceiver : ITypeDeclarationSyntaxReceiver
     {
-        private readonly List<(TypeDeclarationSyntax, AttributeSyntax)> _declarations = new();
+        private readonly Dictionary<TypeDeclarationSyntax, IReadOnlyCollection<AttributeSyntax>> _declarations = new();
 
-        public IReadOnlyCollection<(TypeDeclarationSyntax, AttributeSyntax)> Declarations=> _declarations;
+        public IReadOnlyDictionary<TypeDeclarationSyntax, IReadOnlyCollection<AttributeSyntax>> Declarations => _declarations;
 
         public IAttributeContainsChecker AttributeContainsChecker { get; set; }
 
@@ -28,6 +28,8 @@ namespace SGFramework.TypeDeclaration
             }
             var suffixRegex = new Regex( @"Attribute$" );
 
+            var attributes = new List<AttributeSyntax>();
+
             foreach( var attribute in syntax.AttributeLists.SelectMany( x => x.Attributes ) )
             {
                 var name = attribute.Name.ToString();
@@ -35,9 +37,12 @@ namespace SGFramework.TypeDeclaration
 
                 if( AttributeContainsChecker.ContainsAttribute( new AttributeTypeName( name ) ) )
                 {
-                    _declarations.Add( ( syntax, attribute ) );
+                    attributes.Add( attribute );
                 }
             }
+
+            _declarations[ syntax ] = attributes;
+
         }
     }
 }

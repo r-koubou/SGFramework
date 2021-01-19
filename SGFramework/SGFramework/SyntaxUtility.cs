@@ -8,11 +8,12 @@ namespace SGFramework
     {
         public static TEnum ParseEnumValue<TEnum>( ExpressionSyntax expression ) where TEnum : Enum
         {
-            var enumValue = Enum.Parse(
-                typeof(TEnum),
-                expression.ToString()
-                          .Replace( $"{nameof(TEnum)}.", "" )
-                          .Replace( "|",                 "," ) );
+            var type = typeof(TEnum);
+            var enumName = expression.ToString()
+                                     .Replace( $"{type.Name}.", "" )
+                                     .Replace( "|", "," );
+
+            var enumValue = Enum.Parse( type, enumName );
 
             return (TEnum)enumValue;
         }

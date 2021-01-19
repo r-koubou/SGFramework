@@ -1,10 +1,9 @@
-using GeneratorSample;
+using SGFramework.Sample.ValueObject;
 
 namespace SampleCode
 {
-    [ValueObject(typeof(int))]
+    [ValueObject( typeof(int))]
+    [ValueRange(0, 100+10)]
     public partial class Demo
-    {
-        private static partial int Validate( int value ) => value;
-    }
+    {}
 }

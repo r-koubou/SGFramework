@@ -1,7 +1,7 @@
 <#@ template language="C#" visibility="internal" linePragmas="false" #>
 using System;
 
-namespace GeneratorSample
+namespace SGFramework.Sample.ValueObject
 {
     [Flags]
     internal enum ValueOption
