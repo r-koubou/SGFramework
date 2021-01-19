@@ -4,6 +4,7 @@ using System.Linq;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 
+using SGFramework.Sample.Value;
 using SGFramework.TypeDeclaration;
 
 namespace SGFramework.Sample
@@ -11,25 +12,25 @@ namespace SGFramework.Sample
     [Generator]
     internal class Sample : SourceGenerator<TypeDeclarationSyntaxReceiver>, IAttributeContainsChecker
     {
-        private const string ValueObjectAttributeName = "ValueObject";
+        private static readonly AttributeName ValueObjectAttributeName = new ( "ValueObject" );
 
         protected override bool LaunchDebuggerOnInit { get; } = false;
 
         protected override TypeDeclarationSyntaxReceiver CreateReceiver()
             => new( this );
 
-        protected override void SetupAttributeArgumentParser( Dictionary<string, IAttributeArgumentParser> map )
+        protected override void SetupAttributeArgumentParser( Dictionary<AttributeName, IAttributeArgumentParser> map )
         {
             map[ ValueObjectAttributeName ] = new ValueObjectAttributeArgumentParser();
         }
 
-        public bool ContainsAttribute( string attributeName )
+        public bool ContainsAttribute( AttributeName attributeName )
             => attributeName == ValueObjectAttributeName;
 
         protected override void GenerateAttributeCode( GeneratorExecutionContext context )
         {
             context.AddSource(
-                ValueObjectAttributeName,
+                ValueObjectAttributeName.Value,
                 new ValueObjectAttributeTemplate().TransformText()
             );
         }

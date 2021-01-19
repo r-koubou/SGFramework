@@ -5,17 +5,20 @@ using System.Diagnostics;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 
+using SGFramework.Sample;
+using SGFramework.Sample.Value;
+
 namespace SGFramework.TypeDeclaration
 {
     public abstract class SourceGenerator<TReceiver> : ISourceGenerator
         where TReceiver : ITypeDeclarationSyntaxReceiver
     {
-        protected Dictionary<string, IAttributeArgumentParser> AttributeArgumentParsers { get; } = new();
+        protected Dictionary<AttributeName, IAttributeArgumentParser> AttributeArgumentParsers { get; } = new();
 
         #region Abstruct, Virtual methods
         protected abstract bool LaunchDebuggerOnInit { get; }
         protected abstract TReceiver CreateReceiver();
-        protected abstract void SetupAttributeArgumentParser( Dictionary<string, IAttributeArgumentParser> map );
+        protected abstract void SetupAttributeArgumentParser( Dictionary<AttributeName, IAttributeArgumentParser> map );
         protected abstract void GenerateAttributeCode( GeneratorExecutionContext context );
         protected abstract string GenerateCode(
             TypeDeclarationSyntax declaration,
@@ -103,7 +106,7 @@ namespace SGFramework.TypeDeclaration
                 var ctx = new TypeDeclarationContext( context, declaration );
                 var attributeName = attribute.Name.ToString();
 
-                if( !AttributeArgumentParsers.TryGetValue( attributeName, out var parser ) )
+                if( !AttributeArgumentParsers.TryGetValue( new AttributeName( attributeName ), out var parser ) )
                 {
                     continue;
                 }
