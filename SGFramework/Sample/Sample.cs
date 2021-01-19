@@ -20,7 +20,7 @@ namespace SGFramework.Sample
 
         protected override void SetupAttributeArgumentParser( Dictionary<string, IAttributeArgumentParser> map )
         {
-            map[ nameof(ValueObjectAttributeArgumentParser) ] = new ValueObjectAttributeArgumentParser();
+            map[ ValueObjectAttributeName ] = new ValueObjectAttributeArgumentParser();
         }
 
         public bool ContainsAttribute( string attributeName )
@@ -45,6 +45,7 @@ namespace SGFramework.Sample
                 return string.Empty;
             }
 
+            //TODO 属性リストの可搬性（List(トークン出現順の決め打ち)→Dict(属性名ベースで逆引き)）
             var attributeValue = propertiesList.First().Propertes;
 
             var template = new ValueObjectTemplate()
@@ -52,7 +53,8 @@ namespace SGFramework.Sample
                 Namespace    = nameSpace,
                 Name         = typeName,
                 BaseTypeName = (string)attributeValue[ AttributePropertyKey.AttributeBaseName ],
-                ValueOption  = (ValueOption)attributeValue[ AttributePropertyKey.AttributeOptionFlags ]
+                ValueOption  = attributeValue.ContainsKey( AttributePropertyKey.AttributeOptionFlags )
+                    ? (ValueOption)attributeValue[ AttributePropertyKey.AttributeOptionFlags ] : ValueOption.None
             };
 
             var code = template.TransformText();
