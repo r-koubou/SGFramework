@@ -135,6 +135,7 @@ namespace SGFramework.TypeDeclaration
 
                     parser.ParseAttributeArgument(
                         index,
+                        argument,
                         context.SemanticModel,
                         argumentExpression,
                         attributeParameters

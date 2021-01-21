@@ -9,5 +9,6 @@ namespace SGFramework.Sample.ValueObject
         NonValidating = 1 << 0,
         Implicit = 1 << 1,
         Comparable = 1 << 2,
+        ToString = 1 << 3,
     }
 }

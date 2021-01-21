@@ -62,6 +62,10 @@ namespace SGFramework.Sample.ValueObject
                 return string.Empty;
             }
 
+            if( !valueObjectAttributeParams.TryGetValue( AttributeParameterNames.ValueName, out var valueName ) )
+            {
+                valueName = "Value";
+            }
             if( !valueObjectAttributeParams.TryGetValue( AttributeParameterNames.OptionFlags, out var valueOption ) )
             {
                 valueOption = ValueOption.None;
@@ -89,6 +93,7 @@ namespace SGFramework.Sample.ValueObject
                 Namespace    = nameSpace,
                 Name         = typeName,
                 BaseTypeName = (string)baseName,
+                ValueName    = valueName.ToString(),
                 ValueOption  = (ValueOption)valueOption,
                 Min          = minValue.ToString(),
                 Max          = maxValue.ToString()
