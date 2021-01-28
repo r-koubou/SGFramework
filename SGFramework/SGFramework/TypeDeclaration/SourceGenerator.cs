@@ -7,18 +7,23 @@ using Microsoft.CodeAnalysis.CSharp.Syntax;
 
 namespace SGFramework.TypeDeclaration
 {
-    public abstract class SourceGenerator<TReceiver> : ISourceGenerator
+    public abstract class SourceGenerator<TReceiver>
+        : IGenerator,
+          IAttributeCodeGenerator,
+          ISyntaxReceiverSupport<TReceiver>
         where TReceiver : ITypeDeclarationSyntaxReceiver
     {
-        protected Dictionary<AttributeTypeName, IAttributeArgumentParser> AttributeArgumentParsers { get; } = new();
+        private Dictionary<AttributeTypeName, IAttributeArgumentParser> AttributeArgumentParsers { get; } = new();
 
         #region Abstruct, Virtual methods
 #if DEBUG
-        protected abstract bool LaunchDebuggerOnInit { get; }
+        public abstract bool LaunchDebuggerOnInit { get; }
+#else
+        public virtual bool LaunchDebuggerOnInit => false;
 #endif
-        protected abstract TReceiver CreateReceiver();
-        protected abstract void SetupAttributeArgumentParser( Dictionary<AttributeTypeName, IAttributeArgumentParser> map );
-        protected abstract void GenerateAttributeCode( GeneratorExecutionContext context );
+        public abstract TReceiver CreateSyntaxReceiver();
+        public abstract void SetupAttributeArgumentParser( Dictionary<AttributeTypeName, IAttributeArgumentParser> map );
+        public abstract void GenerateAttributeCode( GeneratorExecutionContext context );
         protected abstract string GenerateCode(
             TypeDeclarationSyntax declaration,
             string nameSpace,
@@ -36,7 +41,7 @@ namespace SGFramework.TypeDeclaration
 #endif
             SetupAttributeArgumentParser( AttributeArgumentParsers );
 
-            var receiver = CreateReceiver();
+            var receiver = CreateSyntaxReceiver();
             context.RegisterForSyntaxNotifications( () => receiver );
         }
 
