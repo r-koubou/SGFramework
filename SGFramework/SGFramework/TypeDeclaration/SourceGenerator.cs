@@ -118,11 +118,6 @@ namespace SGFramework.TypeDeclaration
         {
             foreach( var attribute in receiver.Declarations[ declaration ] )
             {
-                if( attribute.ArgumentList is null )
-                {
-                    continue;
-                }
-
                 var attributeName = new AttributeTypeName( attribute.Name.ToString() );
 
                 if( !AttributeArgumentParsers.TryGetValue( attributeName, out var parser ) )
@@ -130,21 +125,25 @@ namespace SGFramework.TypeDeclaration
                     continue;
                 }
 
-                var attributeArgumentCount = attribute.ArgumentList.Arguments.Count;
                 var attributeParameters = new Dictionary<AttributeParamName, object>();
 
-                for( var index = 0; index < attributeArgumentCount; index++ )
+                if( attribute.ArgumentList is not null )
                 {
-                    var argument = attribute.ArgumentList.Arguments[ index ];
-                    var argumentExpression = argument.Expression;
+                    var attributeArgumentCount = attribute.ArgumentList.Arguments.Count;
 
-                    parser.ParseAttributeArgument(
-                        index,
-                        argument,
-                        context.SemanticModel,
-                        argumentExpression,
-                        attributeParameters
-                    );
+                    for( var index = 0; index < attributeArgumentCount; index++ )
+                    {
+                        var argument = attribute.ArgumentList.Arguments[ index ];
+                        var argumentExpression = argument.Expression;
+
+                        parser.ParseAttributeArgument(
+                            index,
+                            argument,
+                            context.SemanticModel,
+                            argumentExpression,
+                            attributeParameters
+                        );
+                    }
                 }
 
                 context.AttributeList[ attributeName ] = attributeParameters;
