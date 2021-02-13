@@ -25,6 +25,7 @@ namespace SGFramework.TypeDeclaration
         public abstract void SetupAttributeArgumentParser( Dictionary<AttributeTypeName, IAttributeArgumentParser> map );
         public abstract void GenerateAttributeCode( GeneratorExecutionContext context );
         protected abstract string GenerateCode(
+            GeneratorExecutionContext context,
             TypeDeclarationSyntax declaration,
             string nameSpace,
             string typeName,
@@ -77,7 +78,13 @@ namespace SGFramework.TypeDeclaration
                         ns = hintName = string.Empty;
                     }
 
-                    var code = GenerateCode( x.Syntax, ns, name, x.AttributeList );
+                    var code = GenerateCode(
+                        context,
+                        x.Syntax,
+                        ns,
+                        name,
+                        x.AttributeList
+                    );
 
                     if( !string.IsNullOrEmpty( code ) )
                     {
