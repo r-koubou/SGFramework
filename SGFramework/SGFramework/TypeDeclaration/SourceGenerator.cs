@@ -44,9 +44,7 @@ namespace SGFramework.TypeDeclaration
             }
 #endif
             SetupAttributeArgumentParser( AttributeArgumentParsers );
-
             context.RegisterForSyntaxNotifications( () => CreateSyntaxReceiver() );
-            context.RegisterForPostInitialization(PostInitialization);
         }
 
         public virtual void Execute( GeneratorExecutionContext context )
