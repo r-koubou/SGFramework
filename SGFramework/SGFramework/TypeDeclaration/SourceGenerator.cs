@@ -41,8 +41,6 @@ namespace SGFramework.TypeDeclaration
             }
 #endif
             SetupAttributeArgumentParser( AttributeArgumentParsers );
-
-            var receiver = CreateSyntaxReceiver();
             context.RegisterForSyntaxNotifications( () => CreateSyntaxReceiver() );
         }
 
