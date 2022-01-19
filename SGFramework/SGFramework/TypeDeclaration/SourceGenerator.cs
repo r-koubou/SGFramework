@@ -43,7 +43,7 @@ namespace SGFramework.TypeDeclaration
             SetupAttributeArgumentParser( AttributeArgumentParsers );
 
             var receiver = CreateSyntaxReceiver();
-            context.RegisterForSyntaxNotifications( () => receiver );
+            context.RegisterForSyntaxNotifications( () => CreateSyntaxReceiver() );
         }
 
         public virtual void Execute( GeneratorExecutionContext context )
