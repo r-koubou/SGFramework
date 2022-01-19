@@ -2,7 +2,7 @@ name: Build Release
 on:
   push:
     tags:
-      - ver-*.*.*
+      - v*.*.*
 
 jobs:
   nuget_deploy:
