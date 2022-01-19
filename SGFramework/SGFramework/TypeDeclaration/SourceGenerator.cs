@@ -30,8 +30,6 @@ namespace SGFramework.TypeDeclaration
             string nameSpace,
             string typeName,
             IDictionary<AttributeTypeName, IDictionary<AttributeParamName, object>> attributeTypeList );
-
-        protected virtual void PostInitialization( GeneratorPostInitializationContext context ){}
         protected virtual void OnException( System.Exception e ){}
         #endregion
 
@@ -44,9 +42,7 @@ namespace SGFramework.TypeDeclaration
             }
 #endif
             SetupAttributeArgumentParser( AttributeArgumentParsers );
-
             context.RegisterForSyntaxNotifications( () => CreateSyntaxReceiver() );
-            context.RegisterForPostInitialization(PostInitialization);
         }
 
         public virtual void Execute( GeneratorExecutionContext context )
